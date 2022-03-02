@@ -2,7 +2,7 @@ import os
 import pathlib
 
 import requests
-from flask import Flask, session, abort, redirect, request
+from flask import Flask, render_template, session, abort, redirect, request
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
@@ -77,7 +77,7 @@ def protected_area():
     global name
     if 'name' in session:
         name = session['name']
-        return 'Hello ' + name + '<br>' + "<a href='/logout'><button>Logout</button></a>"
+        return  render_template("index.html") + 'Hello ' + name + '<br>' + "<a href='/logout'><button>Logout</button></a>" 
     #return "Protected! <a href='/logout'><button>Logout</button></a>"
 
 
