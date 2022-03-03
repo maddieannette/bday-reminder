@@ -3,12 +3,18 @@ import pathlib
 
 import requests
 from flask import Flask, render_template, session, abort, redirect, request
+from flask_sqlalchemy import SQLAlchemy
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 
 app = Flask("Google Login App")
+
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:password@localhost/birthdayreminder'
+db=SQLAlchemy(app)
+
+
 
 app.secret_key = "4\x1d\x93\x86\xd2I\x1e#;+g\xf7\x80\r\xd8\xe8SE\x8d\x1b\xb5\xf4"
 
@@ -60,6 +66,7 @@ def callback():
 
     session["google_id"] = id_info.get("sub")
     session["name"] = id_info.get("name")
+    session["email"] = id_info.get("email")
     return redirect("/protected_area")
 
 @app.route("/logout")
@@ -75,9 +82,11 @@ def index():
 @login_is_required
 def protected_area():
     global name
+    global email
     if 'name' in session:
         name = session['name']
-        return  render_template("index.html") + 'Hello ' + name + '<br>' + "<a href='/logout'><button>Logout</button></a>" 
+        email = session['email']
+        return  render_template("index.html") + 'Hello ' + name + '<br>' + email + '<br>' + "<a href='/logout'><type='button' class='btn btn-primary'>Logout</button></a>" 
     #return "Protected! <a href='/logout'><button>Logout</button></a>"
 
 
