@@ -8,8 +8,19 @@ from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
+import psycopg2
+
+conn = psycopg2.connect(
+        host="localhost",
+        database="birthdayreminder",
+        user=os.environ['DB_USERNAME'],
+        password=os.environ['DB_PASSWORD'])
+
+# Open a cursor to perform database operations
+cur = conn.cursor()
 
 app = Flask("Google Login App")
+
 
 app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:password@localhost/birthdayreminder'
 db=SQLAlchemy(app)
@@ -87,9 +98,21 @@ def protected_area():
         name = session['name']
         email = session['email']
         return  render_template("index.html") + 'Hello ' + name + '<br>' + email + '<br>' + "<a href='/logout'><type='button' class='btn btn-primary'>Logout</button></a>" 
+cur.execute('INSERT INTO userlogininfo (id, name, email, source)'
+            'VALUES (%s, %s, %s, %s)',
+            (13,
+             'Leo Tolstoy',
+             'example@gmail.com',
+             'Google')
+            )
     #return "Protected! <a href='/logout'><button>Logout</button></a>"
 
 
+conn.commit()
+
+cur.close()
+conn.close()
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
