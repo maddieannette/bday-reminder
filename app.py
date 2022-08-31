@@ -100,7 +100,7 @@ def protected_area():
         return  render_template("index.html") + 'Hello ' + name + '<br>' + email + '<br>' + "<a href='/logout'><type='button' class='btn btn-primary'>Logout</button></a>" 
 cur.execute('INSERT INTO userlogininfo (id, name, email, source)'
             'VALUES (%s, %s, %s, %s)',
-            (13,
+            (19,
              'Leo Tolstoy',
              'example@gmail.com',
              'Google')
